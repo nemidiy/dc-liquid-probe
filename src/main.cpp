@@ -7,6 +7,7 @@
 
 #include <screen.h>
 #include <device.h>
+#include <device_manager.h>
 #include <canvas_register.h>
 
 // Joystick pins
@@ -21,8 +22,8 @@ gj::utils::Screen screen(&display, X, Y, SW);
 
 // WIFI IP
 std::string ip;
-// I2C atlas devices
-std::map<gj::atlas::Device::device_type, gj::atlas::Device*> devices;
+// Device manager
+gj::atlas::DeviceManager device_manager;
 
 void setup(){
   pinMode(X, INPUT);
@@ -77,14 +78,13 @@ void setup(){
       NULL);
 
   //auto discovery
-  gj::atlas::Device::auto_discovery(devices);
+  device_manager.auto_discovery();
 
-  for (auto& kv : devices) {
+  for (auto& kv : device_manager.get_all_devs()) {
     screen.add_canvas(
       gj::utils::CanvasRegister::get_canvas_func(kv.second),
       kv.second);
   }
-
 }
 
 int loop_count = 0;
@@ -113,6 +113,7 @@ void loop(){
   }
 
   screen.render();
+  device_manager.loop();
   ++loop_count;
 }  // End of loop
 
