@@ -1,0 +1,21 @@
+{
+  "name": "Liquid Probe",
+  "device_id": "liquidprobe",
+  "device_stats_interval": 10,
+  "wifi": {
+    "ssid": "differential",
+    "password": "cocototo"
+  },
+  "mqtt": {
+    "host": "192.168.86.24",
+    "port": 1883,
+    "base_topic": "devices/",
+    "auth": false
+  },
+  "ota": {
+    "enabled": true
+  },
+  "settings": {
+    "percentage": 55
+  }
+}

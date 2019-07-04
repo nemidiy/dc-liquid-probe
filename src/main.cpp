@@ -1,6 +1,6 @@
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
 #include <Adafruit_SSD1306.h>
+#include <Homie.h>
+#include <Homie/Datatypes/Interface.hpp>
 
 #include <sstream>
 #include <string>
@@ -9,6 +9,7 @@
 #include <device.h>
 #include <device_manager.h>
 #include <canvas_register.h>
+#include <homie_register.h>
 
 // Joystick pins
 #define X  D6
@@ -22,44 +23,27 @@ gj::utils::Screen screen(&display, X, Y, SW);
 
 // WIFI IP
 std::string ip;
+
 // Device manager
 gj::atlas::DeviceManager device_manager;
+gj::atlas::DeviceManager* dm = &device_manager;
+gj::atlas::DeviceManager* t = gj::atlas::DeviceManager::get_instance(dm);
 
 void setup(){
+
   pinMode(X, INPUT);
   pinMode(Y, INPUT);
   pinMode(SW, INPUT);
   digitalWrite(SW, HIGH);
 
-  // WIFI credentials
-  const char ssid[]     = "Fibertel WiFi992 2.4GHz";
-  const char password[] = "0043182796";
-  // This delay is needed to let the display to initialize
-  Serial.begin(9600);
-  screen.set_alert();
-  screen.set_bluetooth();
-
+  Serial.begin(115200);
+  //screen.set_alert();
+  //screen.set_bluetooth();
+  
   //enable I2C port.
   Wire.begin();
 
-  /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,
-     would try to act as both a client and an access-point and could cause
-     network-issues with your other WiFi-devices on your WiFi-network. */
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  ip = WiFi.localIP().toString().c_str();
-  Serial.println(WiFi.localIP());
-
-  /* splash screen */
+  /* splash screen */  
   display.setCursor(0, 32);
   display.setTextSize(2);
   display.println("  BOOTING");
@@ -68,7 +52,7 @@ void setup(){
   //set screen canvases
   screen.add_canvas(
       [ip](struct gj::utils::Screen::Screen* screen, void* param){
-        screen->set_scrolling_message("SUPER MEGA ULTRA DEVICE");
+        screen->set_scrolling_message("LIQUID BOX");
         screen->draw_scrolling_message(0, 32, 2);
         auto d = screen->get_display();
         d->setCursor(0,55);
@@ -79,41 +63,44 @@ void setup(){
 
   //auto discovery
   device_manager.auto_discovery();
+  // homie register
+  auto reg = gj::utils::homie::HomieRegister::get_instance();
 
   for (auto& kv : device_manager.get_all_devs()) {
+    //add the canvas fir the device
     screen.add_canvas(
-      gj::utils::CanvasRegister::get_canvas_func(kv.second),
-      kv.second);
+        gj::utils::CanvasRegister::get_canvas_func(kv.second),
+        kv.second);
+    //add the homie node for that device type
+    reg->add_node(kv.second);
   }
+
+  // homie initialization
+  reg->set_up();
+
+  // for some reason Homie need this to trigger the on_wifi callback
+  WiFi.begin(
+      HomieInternals::Interface::get().getConfig().get().wifi.ssid,
+      HomieInternals::Interface::get().getConfig().get().wifi.password);
+  
+  // get the ip
+  ip = WiFi.localIP().toString().c_str();
 }
 
 int loop_count = 0;
 uint8_t signal_level = 0;
 
 void loop(){
-
+  
   if (loop_count == 15){
-    // calculate signal strength, seems to go from 0 to 120
-    int8_t signal = WiFi.RSSI();
-    signal = (120 - signal) / 120 * 100;
-    if(signal < 10){
-      signal_level = 0;
-    }else if (signal >= 10 && signal < 20){
-      signal_level = 1;
-    }else if (signal >= 20 && signal < 40){
-        signal_level = 2;
-    }else if (signal >= 40 && signal < 60){
-        signal_level = 3;
-    }else if (signal >= 60 && signal < 80){
-        signal_level = 4;
-    }else if (signal >= 80){
-        signal_level = 5;
-    }
+    uint8_t signal = HomieInternals::Helpers::rssiToPercentage(WiFi.RSSI());
+    signal_level = screen.signal_to_level(signal);
     screen.set_signal_level(signal_level);
   }
 
   screen.render();
   device_manager.loop();
+  Homie.loop();
   ++loop_count;
 }  // End of loop
 
