@@ -13,7 +13,7 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->setTextSize(2);
             d->setCursor(0,18);
             d->println("TEMP");
-            d->setCursor(120,18);
+            d->setCursor(110,18);
             d->println("C");
             d->setCursor(7,36);
             d->setTextSize(4);
@@ -56,8 +56,8 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->setTextSize(2);
             d->setCursor(0,18);
             d->println("EC");
-            d->setCursor(100,18);
-            d->println("mV");
+            d->setCursor(70,18);
+            d->println("uS/cm");
             d->setCursor(7,44);
             d->setTextSize(3);
             d->println(temp);
@@ -71,8 +71,8 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->setTextSize(2);
             d->setCursor(0,18);
             d->println("DO");
-            d->setCursor(100,18);
-            d->println("mV");
+            d->setCursor(70,18);
+            d->println("mg/L");
             d->setCursor(7,44);
             d->setTextSize(3);
             d->println(temp);
