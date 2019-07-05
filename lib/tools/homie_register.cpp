@@ -8,6 +8,7 @@ HomieRegister* HomieRegister::instance;
 
 HomieRegister::HomieRegister(){
 
+    /******************* TEMP ********************/
     temp_setup = [](HomieNode* node){
       node->setProperty("unit").send("centigrades");
     };
@@ -23,6 +24,70 @@ HomieRegister::HomieRegister(){
       }
     };
 
+
+    /******************** PH *********************/
+    ph_setup = [](HomieNode* node){
+      node->setProperty("unit").send("pH");
+    };
+
+    ph_loop = [this](HomieNode* node){
+      if (millis() - this->lastPHSent >= this->PH_INTERVAL * 1000UL
+            || this->lastPHSent == 0) {
+        double ph = gj::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(gj::atlas::Device::PH_SENSOR);
+        Homie.getLogger() << "PH: " << ph << endl;
+        node->setProperty("ph").send(String(ph));
+        this->lastPHSent = millis();
+      }
+    };
+
+    /******************** DO *********************/
+    do_setup = [](HomieNode* node){
+      node->setProperty("unit").send("mg/L");
+    };
+
+    do_loop = [this](HomieNode* node){
+      if (millis() - this->lastDOSent >= this->DO_INTERVAL * 1000UL
+            || this->lastDOSent == 0) {
+        double disolved = gj::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(gj::atlas::Device::DO_SENSOR);
+        Homie.getLogger() << "DO: " << disolved << "mg/L" << endl;
+        node->setProperty("do").send(String(disolved));
+        this->lastDOSent = millis();
+      }
+    };
+
+    /******************** ORP *********************/
+    orp_setup = [](HomieNode* node){
+      node->setProperty("unit").send("mV");
+    };
+
+    orp_loop = [this](HomieNode* node){
+      if (millis() - this->lastORPSent >= this->ORP_INTERVAL * 1000UL
+            || this->lastORPSent == 0) {
+        double orp = gj::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(gj::atlas::Device::ORP_SENSOR);
+        Homie.getLogger() << "ORP: " << orp << "mV" << endl;
+        node->setProperty("orp").send(String(orp));
+        this->lastORPSent = millis();
+      }
+    };
+
+    /******************** EC *********************/
+    ec_setup = [](HomieNode* node){
+      node->setProperty("unit").send("uS/cm");
+    };
+
+    ec_loop = [this](HomieNode* node){
+      if (millis() - this->lastECSent >= this->EC_INTERVAL * 1000UL
+            || this->lastECSent == 0) {
+        double orp = gj::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(gj::atlas::Device::EC_SENSOR);
+        Homie.getLogger() << "EC: " << orp << "uS/cm" << endl;
+        node->setProperty("ec").send(String(orp));
+        this->lastECSent = millis();
+      }
+    };
 }
 
 HomieRegister::~HomieRegister(){
@@ -40,6 +105,23 @@ void HomieRegister::set_up(){
         switch(node_types[node.first]){
           case gj::atlas::Device::TEMP_SENSOR:{
             temp_setup(node.second);
+            break;
+          }
+          case gj::atlas::Device::PH_SENSOR:{
+            ph_setup(node.second);
+            break;
+          }
+          case gj::atlas::Device::DO_SENSOR:{
+            do_setup(node.second);
+            break;
+          }
+          case gj::atlas::Device::ORP_SENSOR:{
+            orp_setup(node.second);
+            break;
+          }
+          case gj::atlas::Device::EC_SENSOR:{
+            orp_setup(node.second);
+            break;
           }
         }
       }
@@ -67,6 +149,39 @@ void HomieRegister::add_node(
       node->advertise("degrees");    
       nodes.insert(std::make_pair(id, node));
       node_types.insert(std::make_pair(id, dev_type));
+      break;
+    }
+    case gj::atlas::Device::PH_SENSOR:{
+      auto node = new HomieNode(id, t);
+      node->advertise("unit");
+      node->advertise("ph");
+      nodes.insert(std::make_pair(id, node));
+      node_types.insert(std::make_pair(id, dev_type));
+      break;
+    }
+    case gj::atlas::Device::DO_SENSOR:{
+      auto node = new HomieNode(id, t);
+      node->advertise("unit");
+      node->advertise("do");
+      nodes.insert(std::make_pair(id, node));
+      node_types.insert(std::make_pair(id, dev_type));
+      break;
+    }
+    case gj::atlas::Device::ORP_SENSOR:{
+      auto node = new HomieNode(id, t);
+      node->advertise("unit");
+      node->advertise("orp");
+      nodes.insert(std::make_pair(id, node));
+      node_types.insert(std::make_pair(id, dev_type));
+      break;
+    }
+    case gj::atlas::Device::EC_SENSOR:{
+      auto node = new HomieNode(id, t);
+      node->advertise("unit");
+      node->advertise("ec");
+      nodes.insert(std::make_pair(id, node));
+      node_types.insert(std::make_pair(id, dev_type));
+      break;
     }
   }
 
@@ -76,6 +191,23 @@ void HomieRegister::add_node(gj::atlas::Device* device){
   switch(device->get_device_type()){
     case gj::atlas::Device::TEMP_SENSOR:{
       add_node(gj::atlas::Device::TEMP_SENSOR, "temperature", "TEMP_SENSOR");
+      break;
+    }
+    case gj::atlas::Device::PH_SENSOR:{
+      add_node(gj::atlas::Device::PH_SENSOR, "ph", "PH_SENSOR");
+      break;
+    }
+    case gj::atlas::Device::DO_SENSOR:{
+      add_node(gj::atlas::Device::DO_SENSOR, "disolved-oxigen", "DO_SENSOR");
+      break;
+    }
+    case gj::atlas::Device::ORP_SENSOR:{
+      add_node(gj::atlas::Device::ORP_SENSOR, "oxi-red-potential", "ORP_SENSOR");
+      break;
+    }
+    case gj::atlas::Device::EC_SENSOR:{
+      add_node(gj::atlas::Device::EC_SENSOR, "electro-conductivity", "ORP_SENSOR");
+      break;
     }
   }
 
@@ -87,6 +219,23 @@ void HomieRegister::loop_handler(){
     switch(node_types[node.first]){
       case gj::atlas::Device::TEMP_SENSOR:{
         temp_loop(node.second);
+        break;
+      }
+      case gj::atlas::Device::PH_SENSOR:{
+        ph_loop(node.second);
+        break;
+      }
+      case gj::atlas::Device::DO_SENSOR:{
+        do_loop(node.second);
+        break;
+      }
+      case gj::atlas::Device::ORP_SENSOR:{
+        orp_loop(node.second);
+        break;
+      }
+      case gj::atlas::Device::EC_SENSOR:{
+        ec_loop(node.second);
+        break;
       }
     }
   }

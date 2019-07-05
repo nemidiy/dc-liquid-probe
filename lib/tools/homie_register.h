@@ -52,11 +52,34 @@ protected:
   setup_function temp_setup;
   loop_function temp_loop;
 
+  setup_function ph_setup;
+  loop_function ph_loop;
+
+  setup_function do_setup;
+  loop_function do_loop;
+
+  setup_function orp_setup;
+  loop_function orp_loop;
+
+  setup_function ec_setup;
+  loop_function ec_loop;
+
   static HomieRegister* instance;
 
   const int TEMPERATURE_INTERVAL = 5;
   unsigned long lastTemperatureSent = 0;
 
+  const int PH_INTERVAL = 5;
+  unsigned long lastPHSent = 0;
+
+  const int DO_INTERVAL = 5;
+  unsigned long lastDOSent = 0;
+
+  const int ORP_INTERVAL = 5;
+  unsigned long lastORPSent = 0;
+
+  const int EC_INTERVAL = 5;
+  unsigned long lastECSent = 0;
 };
 
 } // namespace homie
