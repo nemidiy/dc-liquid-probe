@@ -12,9 +12,17 @@
 #include <homie_register.h>
 
 // Joystick pins
-#define X  D6
-#define Y  D5
-#define SW D7
+#ifdef BOARD_WEMOSD1
+  #define X  D6
+  #define Y  D5
+  #define SW D7
+#endif
+
+#ifdef BOARD_ESPDUINO32
+  #define X  2
+  #define Y  4
+  #define SW 12
+#endif
 
 // Create display
 Adafruit_SSD1306 display(128, 64);
@@ -77,7 +85,7 @@ void setup(){
 
   // homie initialization
   reg->set_up();
-
+  
   // for some reason Homie need this to trigger the on_wifi callback
   WiFi.begin(
       HomieInternals::Interface::get().getConfig().get().wifi.ssid,
@@ -102,5 +110,6 @@ void loop(){
   device_manager.loop();
   Homie.loop();
   ++loop_count;
+  delay(10);
 }  // End of loop
 

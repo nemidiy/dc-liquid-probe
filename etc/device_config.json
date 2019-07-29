@@ -1,6 +1,6 @@
 {
-  "name": "Liquid Probe",
-  "device_id": "liquidprobe",
+  "name": "Liquid Box",
+  "device_id": "liquidbox_01",
   "device_stats_interval": 10,
   "wifi": {
     "ssid": "differential",

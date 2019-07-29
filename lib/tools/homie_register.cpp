@@ -120,7 +120,7 @@ void HomieRegister::set_up(){
             break;
           }
           case gj::atlas::Device::EC_SENSOR:{
-            orp_setup(node.second);
+            ec_setup(node.second);
             break;
           }
         }
@@ -144,7 +144,11 @@ void HomieRegister::add_node(
 
   switch(dev_type){
     case gj::atlas::Device::TEMP_SENSOR:{
+#ifdef BOARD_WEMOSD1
       auto node = new HomieNode(id, t); 
+#elif defined(BOARD_ESPDUINO32)
+      auto node = new HomieNode(id, t, t); 
+#endif
       node->advertise("unit");
       node->advertise("degrees");    
       nodes.insert(std::make_pair(id, node));
@@ -152,7 +156,11 @@ void HomieRegister::add_node(
       break;
     }
     case gj::atlas::Device::PH_SENSOR:{
-      auto node = new HomieNode(id, t);
+#ifdef BOARD_WEMOSD1
+      auto node = new HomieNode(id, t); 
+#elif defined(BOARD_ESPDUINO32)
+      auto node = new HomieNode(id, t, t); 
+#endif
       node->advertise("unit");
       node->advertise("ph");
       nodes.insert(std::make_pair(id, node));
@@ -160,7 +168,11 @@ void HomieRegister::add_node(
       break;
     }
     case gj::atlas::Device::DO_SENSOR:{
-      auto node = new HomieNode(id, t);
+#ifdef BOARD_WEMOSD1
+      auto node = new HomieNode(id, t); 
+#elif defined(BOARD_ESPDUINO32)
+      auto node = new HomieNode(id, t, t); 
+#endif
       node->advertise("unit");
       node->advertise("do");
       nodes.insert(std::make_pair(id, node));
@@ -168,7 +180,11 @@ void HomieRegister::add_node(
       break;
     }
     case gj::atlas::Device::ORP_SENSOR:{
-      auto node = new HomieNode(id, t);
+#ifdef BOARD_WEMOSD1
+      auto node = new HomieNode(id, t); 
+#elif defined(BOARD_ESPDUINO32)
+      auto node = new HomieNode(id, t, t); 
+#endif
       node->advertise("unit");
       node->advertise("orp");
       nodes.insert(std::make_pair(id, node));
@@ -176,7 +192,11 @@ void HomieRegister::add_node(
       break;
     }
     case gj::atlas::Device::EC_SENSOR:{
-      auto node = new HomieNode(id, t);
+#ifdef BOARD_WEMOSD1
+      auto node = new HomieNode(id, t); 
+#elif defined(BOARD_ESPDUINO32)
+      auto node = new HomieNode(id, t, t); 
+#endif
       node->advertise("unit");
       node->advertise("ec");
       nodes.insert(std::make_pair(id, node));
