@@ -13,9 +13,9 @@
 
 // Joystick pins
 #ifdef BOARD_WEMOSD1
-  #define X  D6
-  #define Y  D5
-  #define SW D7
+  #define X  D7
+  #define Y  D6
+  #define SW 14
 #endif
 
 #ifdef BOARD_ESPDUINO32
