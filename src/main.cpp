@@ -110,6 +110,5 @@ void loop(){
   device_manager.loop();
   Homie.loop();
   ++loop_count;
-  delay(10);
 }  // End of loop
 
