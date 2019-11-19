@@ -86,11 +86,6 @@ void setup(){
   // homie initialization
   reg->set_up();
   
-  // for some reason Homie need this to trigger the on_wifi callback
-  WiFi.begin(
-      HomieInternals::Interface::get().getConfig().get().wifi.ssid,
-      HomieInternals::Interface::get().getConfig().get().wifi.password);
-  
   // get the ip
   ip = WiFi.localIP().toString().c_str();
 }
