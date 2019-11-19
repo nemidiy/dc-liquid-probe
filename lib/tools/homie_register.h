@@ -32,11 +32,11 @@ struct HomieRegister {
   virtual ~HomieRegister();
 
   void add_node(
-      gj::atlas::Device::device_type dev_type,
+      dc::atlas::Device::device_type dev_type,
       const char* id,
       const char* t);
 
-  void add_node(gj::atlas::Device* device);
+  void add_node(dc::atlas::Device* device);
 
   void set_up();
 
@@ -47,7 +47,7 @@ struct HomieRegister {
 protected:
 
   std::map<std::string, HomieNode*> nodes;
-  std::map<std::string, gj::atlas::Device::device_type> node_types;
+  std::map<std::string, dc::atlas::Device::device_type> node_types;
   
   setup_function temp_setup;
   loop_function temp_loop;

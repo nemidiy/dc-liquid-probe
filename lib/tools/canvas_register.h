@@ -10,7 +10,7 @@ namespace utils {
 
 struct CanvasRegister {
 
-static Screen::canvas_func get_canvas_func(gj::atlas::Device* dev);
+static Screen::canvas_func get_canvas_func(dc::atlas::Device* dev);
     
 };
 

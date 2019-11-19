@@ -16,8 +16,8 @@ HomieRegister::HomieRegister(){
     temp_loop = [this](HomieNode* node){
       if (millis() - this->lastTemperatureSent >= this->TEMPERATURE_INTERVAL * 1000UL 
             || this->lastTemperatureSent == 0) {
-        double temperature = gj::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(gj::atlas::Device::TEMP_SENSOR);
+        double temperature = dc::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(dc::atlas::Device::TEMP_SENSOR);
         Homie.getLogger() << "Temperature: " << temperature << " °C" << endl;
         node->setProperty("degrees").send(String(temperature));
         this->lastTemperatureSent = millis();
@@ -33,8 +33,8 @@ HomieRegister::HomieRegister(){
     ph_loop = [this](HomieNode* node){
       if (millis() - this->lastPHSent >= this->PH_INTERVAL * 1000UL
             || this->lastPHSent == 0) {
-        double ph = gj::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(gj::atlas::Device::PH_SENSOR);
+        double ph = dc::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(dc::atlas::Device::PH_SENSOR);
         Homie.getLogger() << "PH: " << ph << endl;
         node->setProperty("ph").send(String(ph));
         this->lastPHSent = millis();
@@ -49,8 +49,8 @@ HomieRegister::HomieRegister(){
     do_loop = [this](HomieNode* node){
       if (millis() - this->lastDOSent >= this->DO_INTERVAL * 1000UL
             || this->lastDOSent == 0) {
-        double disolved = gj::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(gj::atlas::Device::DO_SENSOR);
+        double disolved = dc::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(dc::atlas::Device::DO_SENSOR);
         Homie.getLogger() << "DO: " << disolved << "mg/L" << endl;
         node->setProperty("do").send(String(disolved));
         this->lastDOSent = millis();
@@ -65,8 +65,8 @@ HomieRegister::HomieRegister(){
     orp_loop = [this](HomieNode* node){
       if (millis() - this->lastORPSent >= this->ORP_INTERVAL * 1000UL
             || this->lastORPSent == 0) {
-        double orp = gj::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(gj::atlas::Device::ORP_SENSOR);
+        double orp = dc::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(dc::atlas::Device::ORP_SENSOR);
         Homie.getLogger() << "ORP: " << orp << "mV" << endl;
         node->setProperty("orp").send(String(orp));
         this->lastORPSent = millis();
@@ -81,8 +81,8 @@ HomieRegister::HomieRegister(){
     ec_loop = [this](HomieNode* node){
       if (millis() - this->lastECSent >= this->EC_INTERVAL * 1000UL
             || this->lastECSent == 0) {
-        double orp = gj::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(gj::atlas::Device::EC_SENSOR);
+        double orp = dc::atlas::DeviceManager::get_instance() \
+                    ->get_device_value(dc::atlas::Device::EC_SENSOR);
         Homie.getLogger() << "EC: " << orp << "uS/cm" << endl;
         node->setProperty("ec").send(String(orp));
         this->lastECSent = millis();
@@ -103,23 +103,23 @@ void HomieRegister::set_up(){
       // go through the nodes and set them up
       for(auto& node: nodes){
         switch(node_types[node.first]){
-          case gj::atlas::Device::TEMP_SENSOR:{
+          case dc::atlas::Device::TEMP_SENSOR:{
             temp_setup(node.second);
             break;
           }
-          case gj::atlas::Device::PH_SENSOR:{
+          case dc::atlas::Device::PH_SENSOR:{
             ph_setup(node.second);
             break;
           }
-          case gj::atlas::Device::DO_SENSOR:{
+          case dc::atlas::Device::DO_SENSOR:{
             do_setup(node.second);
             break;
           }
-          case gj::atlas::Device::ORP_SENSOR:{
+          case dc::atlas::Device::ORP_SENSOR:{
             orp_setup(node.second);
             break;
           }
-          case gj::atlas::Device::EC_SENSOR:{
+          case dc::atlas::Device::EC_SENSOR:{
             ec_setup(node.second);
             break;
           }
@@ -138,15 +138,15 @@ void HomieRegister::set_up(){
 }
 
 void HomieRegister::add_node(
-      gj::atlas::Device::device_type dev_type,
+      dc::atlas::Device::device_type dev_type,
       const char* id,
       const char* t){
 
   switch(dev_type){
-    case gj::atlas::Device::TEMP_SENSOR:{
-#ifdef BOARD_WEMOSD1
+    case dc::atlas::Device::TEMP_SENSOR:{
+#ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
-#elif defined(BOARD_ESPDUINO32)
+#else
       auto node = new HomieNode(id, t, t); 
 #endif
       node->advertise("unit");
@@ -155,10 +155,10 @@ void HomieRegister::add_node(
       node_types.insert(std::make_pair(id, dev_type));
       break;
     }
-    case gj::atlas::Device::PH_SENSOR:{
-#ifdef BOARD_WEMOSD1
+    case dc::atlas::Device::PH_SENSOR:{
+#ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
-#elif defined(BOARD_ESPDUINO32)
+#else
       auto node = new HomieNode(id, t, t); 
 #endif
       node->advertise("unit");
@@ -167,10 +167,10 @@ void HomieRegister::add_node(
       node_types.insert(std::make_pair(id, dev_type));
       break;
     }
-    case gj::atlas::Device::DO_SENSOR:{
-#ifdef BOARD_WEMOSD1
+    case dc::atlas::Device::DO_SENSOR:{
+#ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
-#elif defined(BOARD_ESPDUINO32)
+#else
       auto node = new HomieNode(id, t, t); 
 #endif
       node->advertise("unit");
@@ -179,10 +179,10 @@ void HomieRegister::add_node(
       node_types.insert(std::make_pair(id, dev_type));
       break;
     }
-    case gj::atlas::Device::ORP_SENSOR:{
-#ifdef BOARD_WEMOSD1
+    case dc::atlas::Device::ORP_SENSOR:{
+#ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
-#elif defined(BOARD_ESPDUINO32)
+#else
       auto node = new HomieNode(id, t, t); 
 #endif
       node->advertise("unit");
@@ -191,10 +191,10 @@ void HomieRegister::add_node(
       node_types.insert(std::make_pair(id, dev_type));
       break;
     }
-    case gj::atlas::Device::EC_SENSOR:{
-#ifdef BOARD_WEMOSD1
+    case dc::atlas::Device::EC_SENSOR:{
+#ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
-#elif defined(BOARD_ESPDUINO32)
+#else
       auto node = new HomieNode(id, t, t); 
 #endif
       node->advertise("unit");
@@ -207,26 +207,26 @@ void HomieRegister::add_node(
 
 }
 
-void HomieRegister::add_node(gj::atlas::Device* device){
+void HomieRegister::add_node(dc::atlas::Device* device){
   switch(device->get_device_type()){
-    case gj::atlas::Device::TEMP_SENSOR:{
-      add_node(gj::atlas::Device::TEMP_SENSOR, "temperature", "TEMP_SENSOR");
+    case dc::atlas::Device::TEMP_SENSOR:{
+      add_node(dc::atlas::Device::TEMP_SENSOR, "temperature", "TEMP_SENSOR");
       break;
     }
-    case gj::atlas::Device::PH_SENSOR:{
-      add_node(gj::atlas::Device::PH_SENSOR, "ph", "PH_SENSOR");
+    case dc::atlas::Device::PH_SENSOR:{
+      add_node(dc::atlas::Device::PH_SENSOR, "ph", "PH_SENSOR");
       break;
     }
-    case gj::atlas::Device::DO_SENSOR:{
-      add_node(gj::atlas::Device::DO_SENSOR, "disolved-oxigen", "DO_SENSOR");
+    case dc::atlas::Device::DO_SENSOR:{
+      add_node(dc::atlas::Device::DO_SENSOR, "disolved-oxigen", "DO_SENSOR");
       break;
     }
-    case gj::atlas::Device::ORP_SENSOR:{
-      add_node(gj::atlas::Device::ORP_SENSOR, "oxi-red-potential", "ORP_SENSOR");
+    case dc::atlas::Device::ORP_SENSOR:{
+      add_node(dc::atlas::Device::ORP_SENSOR, "oxi-red-potential", "ORP_SENSOR");
       break;
     }
-    case gj::atlas::Device::EC_SENSOR:{
-      add_node(gj::atlas::Device::EC_SENSOR, "electro-conductivity", "ORP_SENSOR");
+    case dc::atlas::Device::EC_SENSOR:{
+      add_node(dc::atlas::Device::EC_SENSOR, "electro-conductivity", "ORP_SENSOR");
       break;
     }
   }
@@ -237,23 +237,23 @@ void HomieRegister::loop_handler(){
   // go through the nodes and set them up
   for(auto& node: nodes){
     switch(node_types[node.first]){
-      case gj::atlas::Device::TEMP_SENSOR:{
+      case dc::atlas::Device::TEMP_SENSOR:{
         temp_loop(node.second);
         break;
       }
-      case gj::atlas::Device::PH_SENSOR:{
+      case dc::atlas::Device::PH_SENSOR:{
         ph_loop(node.second);
         break;
       }
-      case gj::atlas::Device::DO_SENSOR:{
+      case dc::atlas::Device::DO_SENSOR:{
         do_loop(node.second);
         break;
       }
-      case gj::atlas::Device::ORP_SENSOR:{
+      case dc::atlas::Device::ORP_SENSOR:{
         orp_loop(node.second);
         break;
       }
-      case gj::atlas::Device::EC_SENSOR:{
+      case dc::atlas::Device::EC_SENSOR:{
         ec_loop(node.second);
         break;
       }

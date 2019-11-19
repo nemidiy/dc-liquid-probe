@@ -33,9 +33,9 @@ gj::utils::Screen screen(&display, X, Y, SW);
 std::string ip;
 
 // Device manager
-gj::atlas::DeviceManager device_manager;
-gj::atlas::DeviceManager* dm = &device_manager;
-gj::atlas::DeviceManager* t = gj::atlas::DeviceManager::get_instance(dm);
+dc::atlas::DeviceManager device_manager;
+dc::atlas::DeviceManager* dm = &device_manager;
+dc::atlas::DeviceManager* t = dc::atlas::DeviceManager::get_instance(dm);
 
 void setup(){
 

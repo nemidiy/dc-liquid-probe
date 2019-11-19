@@ -2,12 +2,12 @@
 
 using namespace gj::utils;
 
-Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
+Screen::canvas_func CanvasRegister::get_canvas_func(dc::atlas::Device* dev){
 
   switch(dev->get_device_type()){
-      case gj::atlas::Device::TEMP_SENSOR:{
+      case dc::atlas::Device::TEMP_SENSOR:{
           return [](struct gj::utils::Screen::Screen* screen, void* param){
-            gj::atlas::Device* dev = static_cast<gj::atlas::Device*>(param);
+            dc::atlas::Device* dev = static_cast<dc::atlas::Device*>(param);
             double temp = dev->get_last_value();
             auto* d = screen->get_display();
             d->setTextSize(2);
@@ -20,9 +20,9 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->println(temp);
           };
       }
-      case gj::atlas::Device::PH_SENSOR:{
+      case dc::atlas::Device::PH_SENSOR:{
           return [](struct gj::utils::Screen::Screen* screen, void* param){
-            gj::atlas::Device* dev = static_cast<gj::atlas::Device*>(param);
+            dc::atlas::Device* dev = static_cast<dc::atlas::Device*>(param);
             double temp = dev->get_last_value();
             auto* d = screen->get_display();
             d->setTextSize(2);
@@ -33,9 +33,9 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->println(temp);
           };
       }
-      case gj::atlas::Device::ORP_SENSOR:{
+      case dc::atlas::Device::ORP_SENSOR:{
           return [](struct gj::utils::Screen::Screen* screen, void* param){
-            gj::atlas::Device* dev = static_cast<gj::atlas::Device*>(param);
+            dc::atlas::Device* dev = static_cast<dc::atlas::Device*>(param);
             double temp = dev->get_last_value();
             auto* d = screen->get_display();
             d->setTextSize(2);
@@ -48,9 +48,9 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->println(temp);
           };
       }
-      case gj::atlas::Device::EC_SENSOR:{
+      case dc::atlas::Device::EC_SENSOR:{
           return [](struct gj::utils::Screen::Screen* screen, void* param){
-            gj::atlas::Device* dev = static_cast<gj::atlas::Device*>(param);
+            dc::atlas::Device* dev = static_cast<dc::atlas::Device*>(param);
             double temp = dev->get_last_value();
             auto* d = screen->get_display();
             d->setTextSize(2);
@@ -63,9 +63,9 @@ Screen::canvas_func CanvasRegister::get_canvas_func(gj::atlas::Device* dev){
             d->println(temp);
           };
       }
-      case gj::atlas::Device::DO_SENSOR:{
+      case dc::atlas::Device::DO_SENSOR:{
           return [](struct gj::utils::Screen::Screen* screen, void* param){
-            gj::atlas::Device* dev = static_cast<gj::atlas::Device*>(param);
+            dc::atlas::Device* dev = static_cast<dc::atlas::Device*>(param);
             double temp = dev->get_last_value();
             auto* d = screen->get_display();
             d->setTextSize(2);
