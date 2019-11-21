@@ -84,8 +84,9 @@ void setup(){
   }
 
   // homie initialization
+   // The underscore is not a typo! See Magic bytes
+  Homie_setFirmware("liquid-box", "1.0.0");
   reg->set_up();
-  
   // get the ip
   ip = WiFi.localIP().toString().c_str();
 }

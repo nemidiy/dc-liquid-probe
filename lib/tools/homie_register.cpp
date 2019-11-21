@@ -95,8 +95,6 @@ HomieRegister::~HomieRegister(){
 }
 
 void HomieRegister::set_up(){
-   // The underscore is not a typo! See Magic bytes
-  Homie_setFirmware("liquid-box", "1.0.0");
 
   Homie \
     .setSetupFunction([this](){
