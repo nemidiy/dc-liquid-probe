@@ -316,7 +316,6 @@ void HomieRegister::on_homie_event(const HomieEvent& event) {
       break;
     case HomieEventType::MQTT_PACKET_ACKNOWLEDGED:
       // Do whatever you want when an MQTT packet with QoS > 0 is acknowledged by the broker
-      Serial.println("HomieEventType::MQTT_PACKET_ACKNOWLEDGED");
       // You can use event.packetId
       break;
     case HomieEventType::READY_TO_SLEEP:
