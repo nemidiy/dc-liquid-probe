@@ -13,21 +13,17 @@
 
 // Joystick pins
 #ifdef BOARD_WEMOSD1
-  #define X  D7
-  #define Y  D6
   #define SW 14
 #endif
 
 #ifdef BOARD_ESPDUINO32
-  #define X  2
-  #define Y  4
   #define SW 12
 #endif
 
 // Create display
 Adafruit_SSD1306 display(128, 64);
 // create the screen
-gj::utils::Screen screen(&display, X, Y, SW);
+gj::utils::Screen screen(&display, SW);
 
 // WIFI IP
 std::string ip;
@@ -37,12 +33,10 @@ dc::atlas::DeviceManager device_manager;
 dc::atlas::DeviceManager* dm = &device_manager;
 dc::atlas::DeviceManager* t = dc::atlas::DeviceManager::get_instance(dm);
 
-void setup(){
+int loop_count = 0;
+uint8_t signal_level = 0;
 
-  pinMode(X, INPUT);
-  pinMode(Y, INPUT);
-  pinMode(SW, INPUT);
-  digitalWrite(SW, HIGH);
+void setup(){
 
   Serial.begin(115200);
   //screen.set_alert();
@@ -91,17 +85,12 @@ void setup(){
   ip = WiFi.localIP().toString().c_str();
 }
 
-int loop_count = 0;
-uint8_t signal_level = 0;
-
 void loop(){
-  
   if (loop_count == 15){
     uint8_t signal = HomieInternals::Helpers::rssiToPercentage(WiFi.RSSI());
     signal_level = screen.signal_to_level(signal);
     screen.set_signal_level(signal_level);
   }
-
   screen.render();
   device_manager.loop();
   Homie.loop();
