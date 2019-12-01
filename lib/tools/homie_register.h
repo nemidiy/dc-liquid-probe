@@ -16,7 +16,8 @@ namespace homie {
 struct HomieRegister {
 
   typedef std::function<void (HomieNode* node)> setup_function;
-  typedef std::function<void (HomieNode* node)> loop_function;
+  typedef std::function<
+      void (HomieNode* node, dc::atlas::Device* device)> loop_function;
 
   static HomieRegister* get_instance(HomieRegister* reg = NULL){
     if(reg){
@@ -47,7 +48,6 @@ struct HomieRegister {
 protected:
 
   std::map<std::string, HomieNode*> nodes;
-  std::map<std::string, dc::atlas::Device::device_type> node_types;
   
   setup_function temp_setup;
   loop_function temp_loop;

@@ -13,11 +13,10 @@ HomieRegister::HomieRegister(){
       node->setProperty("unit").send("centigrades");
     };
 
-    temp_loop = [this](HomieNode* node){
+    temp_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastTemperatureSent >= this->TEMPERATURE_INTERVAL * 1000UL 
             || this->lastTemperatureSent == 0) {
-        double temperature = dc::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(dc::atlas::Device::TEMP_SENSOR);
+        double temperature = dev->get_last_value();
         Homie.getLogger() << "Temperature: " << temperature << " °C" << endl;
         node->setProperty("degrees").send(String(temperature));
         this->lastTemperatureSent = millis();
@@ -30,11 +29,10 @@ HomieRegister::HomieRegister(){
       node->setProperty("unit").send("pH");
     };
 
-    ph_loop = [this](HomieNode* node){
+    ph_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastPHSent >= this->PH_INTERVAL * 1000UL
             || this->lastPHSent == 0) {
-        double ph = dc::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(dc::atlas::Device::PH_SENSOR);
+        double ph = dev->get_last_value();
         Homie.getLogger() << "PH: " << ph << endl;
         node->setProperty("ph").send(String(ph));
         this->lastPHSent = millis();
@@ -46,11 +44,10 @@ HomieRegister::HomieRegister(){
       node->setProperty("unit").send("mg/L");
     };
 
-    do_loop = [this](HomieNode* node){
+    do_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastDOSent >= this->DO_INTERVAL * 1000UL
             || this->lastDOSent == 0) {
-        double disolved = dc::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(dc::atlas::Device::DO_SENSOR);
+        double disolved = dev->get_last_value();
         Homie.getLogger() << "DO: " << disolved << "mg/L" << endl;
         node->setProperty("do").send(String(disolved));
         this->lastDOSent = millis();
@@ -62,11 +59,10 @@ HomieRegister::HomieRegister(){
       node->setProperty("unit").send("mV");
     };
 
-    orp_loop = [this](HomieNode* node){
+    orp_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastORPSent >= this->ORP_INTERVAL * 1000UL
             || this->lastORPSent == 0) {
-        double orp = dc::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(dc::atlas::Device::ORP_SENSOR);
+        double orp = dev->get_last_value();
         Homie.getLogger() << "ORP: " << orp << "mV" << endl;
         node->setProperty("orp").send(String(orp));
         this->lastORPSent = millis();
@@ -78,11 +74,10 @@ HomieRegister::HomieRegister(){
       node->setProperty("unit").send("uS/cm");
     };
 
-    ec_loop = [this](HomieNode* node){
+    ec_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastECSent >= this->EC_INTERVAL * 1000UL
             || this->lastECSent == 0) {
-        double orp = dc::atlas::DeviceManager::get_instance() \
-                    ->get_device_value(dc::atlas::Device::EC_SENSOR);
+        double orp = dev->get_last_value();
         Homie.getLogger() << "EC: " << orp << "uS/cm" << endl;
         node->setProperty("ec").send(String(orp));
         this->lastECSent = millis();
@@ -99,8 +94,10 @@ void HomieRegister::set_up(){
   Homie \
     .setSetupFunction([this](){
       // go through the nodes and set them up
+      auto dm = dc::atlas::DeviceManager::get_instance();
       for(auto& node: nodes){
-        switch(node_types[node.first]){
+        auto dev = dm->get_device(node.first);
+        switch(dev->get_device_type()){
           case dc::atlas::Device::TEMP_SENSOR:{
             temp_setup(node.second);
             break;
@@ -145,86 +142,86 @@ void HomieRegister::add_node(
 #ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
 #else
-      auto node = new HomieNode(id, t, t); 
+      auto node = new HomieNode(id, t, id); 
 #endif
       node->advertise("unit");
       node->advertise("degrees");    
       nodes.insert(std::make_pair(id, node));
-      node_types.insert(std::make_pair(id, dev_type));
       break;
     }
     case dc::atlas::Device::PH_SENSOR:{
 #ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
 #else
-      auto node = new HomieNode(id, t, t); 
+      auto node = new HomieNode(id, t, id); 
 #endif
       node->advertise("unit");
       node->advertise("ph");
       nodes.insert(std::make_pair(id, node));
-      node_types.insert(std::make_pair(id, dev_type));
       break;
     }
     case dc::atlas::Device::DO_SENSOR:{
 #ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
 #else
-      auto node = new HomieNode(id, t, t); 
+      auto node = new HomieNode(id, t, id); 
 #endif
       node->advertise("unit");
       node->advertise("do");
       nodes.insert(std::make_pair(id, node));
-      node_types.insert(std::make_pair(id, dev_type));
       break;
     }
     case dc::atlas::Device::ORP_SENSOR:{
 #ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
 #else
-      auto node = new HomieNode(id, t, t); 
+      auto node = new HomieNode(id, t, id); 
 #endif
       node->advertise("unit");
       node->advertise("orp");
       nodes.insert(std::make_pair(id, node));
-      node_types.insert(std::make_pair(id, dev_type));
       break;
     }
     case dc::atlas::Device::EC_SENSOR:{
 #ifndef HOMIE_V3
       auto node = new HomieNode(id, t); 
 #else
-      auto node = new HomieNode(id, t, t); 
+      auto node = new HomieNode(id, t, id); 
 #endif
       node->advertise("unit");
       node->advertise("ec");
       nodes.insert(std::make_pair(id, node));
-      node_types.insert(std::make_pair(id, dev_type));
       break;
     }
   }
 
 }
 
-void HomieRegister::add_node(dc::atlas::Device* device){
-  switch(device->get_device_type()){
+void HomieRegister::add_node(dc::atlas::Device* dev){
+  switch(dev->get_device_type()){
     case dc::atlas::Device::TEMP_SENSOR:{
-      add_node(dc::atlas::Device::TEMP_SENSOR, "temperature", "TEMP_SENSOR");
+      add_node(dc::atlas::Device::TEMP_SENSOR,
+        dev->get_name().c_str(), "TEMP_SENSOR");
       break;
     }
     case dc::atlas::Device::PH_SENSOR:{
-      add_node(dc::atlas::Device::PH_SENSOR, "ph", "PH_SENSOR");
+      add_node(dc::atlas::Device::PH_SENSOR,
+        dev->get_name().c_str(), "PH_SENSOR");
       break;
     }
     case dc::atlas::Device::DO_SENSOR:{
-      add_node(dc::atlas::Device::DO_SENSOR, "disolved-oxigen", "DO_SENSOR");
+      add_node(dc::atlas::Device::DO_SENSOR,
+        dev->get_name().c_str(), "DO_SENSOR");
       break;
     }
     case dc::atlas::Device::ORP_SENSOR:{
-      add_node(dc::atlas::Device::ORP_SENSOR, "oxi-red-potential", "ORP_SENSOR");
+      add_node(dc::atlas::Device::ORP_SENSOR,
+        dev->get_name().c_str(), "ORP_SENSOR");
       break;
     }
     case dc::atlas::Device::EC_SENSOR:{
-      add_node(dc::atlas::Device::EC_SENSOR, "electro-conductivity", "ORP_SENSOR");
+      add_node(dc::atlas::Device::EC_SENSOR,
+        dev->get_name().c_str(), "EC_SENSOR");
       break;
     }
   }
@@ -233,30 +230,36 @@ void HomieRegister::add_node(dc::atlas::Device* device){
 
 void HomieRegister::loop_handler(){
   // go through the nodes and set them up
+  //Homie.getLogger() <<
+  //  ">>>>>>>>>>>>>> HomieRegister::loop_handler() >>>>>>>>>>>" << endl;
+  auto dm = dc::atlas::DeviceManager::get_instance();
   for(auto& node: nodes){
-    switch(node_types[node.first]){
+    auto dev = dm->get_device(node.first);
+    switch(dev->get_device_type()){
       case dc::atlas::Device::TEMP_SENSOR:{
-        temp_loop(node.second);
+        temp_loop(node.second, dev);
         break;
       }
       case dc::atlas::Device::PH_SENSOR:{
-        ph_loop(node.second);
+        ph_loop(node.second, dev);
         break;
       }
       case dc::atlas::Device::DO_SENSOR:{
-        do_loop(node.second);
+        do_loop(node.second, dev);
         break;
       }
       case dc::atlas::Device::ORP_SENSOR:{
-        orp_loop(node.second);
+        orp_loop(node.second, dev);
         break;
       }
       case dc::atlas::Device::EC_SENSOR:{
-        ec_loop(node.second);
+        ec_loop(node.second, dev);
         break;
       }
     }
   }
+  //Homie.getLogger() <<
+  //  "<<<<<<<<<<<<<< HomieRegister::loop_handler() <<<<<<<<<<<<<<" << endl;
   
 }
 

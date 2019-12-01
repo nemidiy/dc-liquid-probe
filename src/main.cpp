@@ -63,22 +63,116 @@ void setup(){
       },
       NULL);
 
-  //auto discovery
-  device_manager.auto_discovery();
-  // homie register
-  auto reg = gj::utils::homie::HomieRegister::get_instance();
+// homie register
+auto reg = gj::utils::homie::HomieRegister::get_instance();
 
-  for (auto& kv : device_manager.get_all_devs()) {
-    //add the canvas fir the device
-    screen.add_canvas(
-        gj::utils::CanvasRegister::get_canvas_func(kv.second),
-        kv.second);
-    //add the homie node for that device type
-    reg->add_node(kv.second);
-  }
+dc::atlas::Device* dev = NULL;
 
+#ifdef I2C_TEMP_ADDR
+  Homie.getLogger() << "TEMP_SENSOR @ " << I2C_TEMP_ADDR << endl;
+  //create the Device
+  dev = new dc::atlas::Device(
+        I2C_TEMP_ADDR, dc::atlas::Device::TEMP_SENSOR);
+  //add to the device manager
+  device_manager.add_device(dev, "temp");
+  // add the canvas to the screen
+  screen.add_canvas(
+        gj::utils::CanvasRegister::get_canvas_func(dev), dev);
+  reg->add_node(dev);
+  // schedule the read command every 2 seconds.
+  device_manager.schedule_command(
+        "R",
+        "temp",
+        dc::atlas::DeviceManager::read_double_callback,
+        5000,
+        900,
+        2000);
+#endif
+
+#ifdef I2C_PH_ADDR
+  Homie.getLogger() << "PH_SENSOR @ " << I2C_PH_ADDR << endl;
+  //create the Device
+  dev = new dc::atlas::Device(
+        I2C_PH_ADDR, dc::atlas::Device::PH_SENSOR);
+  //add to the device manager
+  device_manager.add_device(dev, "ph");
+  // add the canvas to the screen
+  screen.add_canvas(
+        gj::utils::CanvasRegister::get_canvas_func(dev), dev);
+  reg->add_node(dev);
+  // schedule the read command every 2 seconds.
+  device_manager.schedule_command(
+        "R",
+        "ph",
+        dc::atlas::DeviceManager::read_double_callback,
+        5000,
+        900,
+        2000);
+#endif
+
+#ifdef I2C_ORP_ADDR
+  Homie.getLogger() << "ORP_SENSOR @ " << I2C_ORP_ADDR << endl;
+  //create the Device
+  dev = new dc::atlas::Device(
+        I2C_ORP_ADDR, dc::atlas::Device::ORP_SENSOR);
+  //add to the device manager
+  device_manager.add_device(dev, "orp");
+  // add the canvas to the screen
+  screen.add_canvas(
+        gj::utils::CanvasRegister::get_canvas_func(dev), dev);
+  reg->add_node(dev);
+  // schedule the read command every 2 seconds.
+  device_manager.schedule_command(
+        "R",
+        "orp",
+        dc::atlas::DeviceManager::read_double_callback,
+        5000,
+        900,
+        2000);
+#endif
+
+#ifdef I2C_EC_ADDR
+  Homie.getLogger() << "EC_SENSOR @ " << I2C_EC_ADDR << endl;
+  //create the Device
+  dev = new dc::atlas::Device(
+        I2C_EC_ADDR, dc::atlas::Device::EC_SENSOR);
+  //add to the device manager
+  device_manager.add_device(dev, "ec");
+  // add the canvas to the screen
+  screen.add_canvas(
+        gj::utils::CanvasRegister::get_canvas_func(dev), dev);
+  reg->add_node(dev);
+  // schedule the read command every 2 seconds.
+  device_manager.schedule_command(
+        "R",
+        "ec",
+        dc::atlas::DeviceManager::read_double_callback,
+        5000,
+        900,
+        2000);
+#endif
+
+#ifdef I2C_DO_ADDR
+  Homie.getLogger() << "DO_SENSOR @ " << I2C_DO_ADDR << endl;
+  //create the Device
+  dev = new dc::atlas::Device(
+        I2C_DO_ADDR, dc::atlas::Device::DO_SENSOR);
+  //add to the device manager
+  device_manager.add_device(dev, "do");
+  // add the canvas to the screen
+  screen.add_canvas(
+        gj::utils::CanvasRegister::get_canvas_func(dev), dev);
+  reg->add_node(dev);
+  // schedule the read command every 2 seconds.
+  device_manager.schedule_command(
+        "R",
+        "do",
+        dc::atlas::DeviceManager::read_double_callback,
+        5000,
+        900,
+        2000);
+#endif
   // homie initialization
-   // The underscore is not a typo! See Magic bytes
   Homie_setFirmware("liquid-box", "1.0.0");
   reg->set_up();
   // get the ip
