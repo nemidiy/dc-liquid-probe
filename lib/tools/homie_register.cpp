@@ -139,55 +139,35 @@ void HomieRegister::add_node(
 
   switch(dev_type){
     case dc::atlas::Device::TEMP_SENSOR:{
-#ifndef HOMIE_V3
-      auto node = new HomieNode(id, t); 
-#else
       auto node = new HomieNode(id, t, id); 
-#endif
       node->advertise("unit");
       node->advertise("degrees");    
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::PH_SENSOR:{
-#ifndef HOMIE_V3
-      auto node = new HomieNode(id, t); 
-#else
       auto node = new HomieNode(id, t, id); 
-#endif
       node->advertise("unit");
       node->advertise("ph");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::DO_SENSOR:{
-#ifndef HOMIE_V3
-      auto node = new HomieNode(id, t); 
-#else
       auto node = new HomieNode(id, t, id); 
-#endif
       node->advertise("unit");
       node->advertise("do");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::ORP_SENSOR:{
-#ifndef HOMIE_V3
-      auto node = new HomieNode(id, t); 
-#else
       auto node = new HomieNode(id, t, id); 
-#endif
       node->advertise("unit");
       node->advertise("orp");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::EC_SENSOR:{
-#ifndef HOMIE_V3
-      auto node = new HomieNode(id, t); 
-#else
       auto node = new HomieNode(id, t, id); 
-#endif
       node->advertise("unit");
       node->advertise("ec");
       nodes.insert(std::make_pair(id, node));
