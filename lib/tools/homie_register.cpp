@@ -18,7 +18,7 @@ HomieRegister::HomieRegister(){
             || this->lastTemperatureSent == 0) {
         double temperature = dev->get_last_value();
         Homie.getLogger() << "Temperature: " << temperature << " °C" << endl;
-        node->setProperty("degrees").send(String(temperature));
+        node->setProperty("value").send(String(temperature));
         this->lastTemperatureSent = millis();
       }
     };
@@ -34,7 +34,7 @@ HomieRegister::HomieRegister(){
             || this->lastPHSent == 0) {
         double ph = dev->get_last_value();
         Homie.getLogger() << "PH: " << ph << endl;
-        node->setProperty("ph").send(String(ph));
+        node->setProperty("value").send(String(ph));
         this->lastPHSent = millis();
       }
     };
@@ -49,7 +49,7 @@ HomieRegister::HomieRegister(){
             || this->lastDOSent == 0) {
         double disolved = dev->get_last_value();
         Homie.getLogger() << "DO: " << disolved << "mg/L" << endl;
-        node->setProperty("do").send(String(disolved));
+        node->setProperty("value").send(String(disolved));
         this->lastDOSent = millis();
       }
     };
@@ -64,7 +64,7 @@ HomieRegister::HomieRegister(){
             || this->lastORPSent == 0) {
         double orp = dev->get_last_value();
         Homie.getLogger() << "ORP: " << orp << "mV" << endl;
-        node->setProperty("orp").send(String(orp));
+        node->setProperty("value").send(String(orp));
         this->lastORPSent = millis();
       }
     };
@@ -77,9 +77,9 @@ HomieRegister::HomieRegister(){
     ec_loop = [this](HomieNode* node, dc::atlas::Device* dev){
       if (millis() - this->lastECSent >= this->EC_INTERVAL * 1000UL
             || this->lastECSent == 0) {
-        double orp = dev->get_last_value();
-        Homie.getLogger() << "EC: " << orp << "uS/cm" << endl;
-        node->setProperty("ec").send(String(orp));
+        double ec = dev->get_last_value();
+        Homie.getLogger() << "EC: " << ec << "uS/cm" << endl;
+        node->setProperty("value").send(String(ec));
         this->lastECSent = millis();
       }
     };
@@ -141,35 +141,35 @@ void HomieRegister::add_node(
     case dc::atlas::Device::TEMP_SENSOR:{
       auto node = new HomieNode(id, t, id); 
       node->advertise("unit");
-      node->advertise("degrees");    
+      node->advertise("value");    
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::PH_SENSOR:{
       auto node = new HomieNode(id, t, id); 
       node->advertise("unit");
-      node->advertise("ph");
+      node->advertise("value");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::DO_SENSOR:{
       auto node = new HomieNode(id, t, id); 
       node->advertise("unit");
-      node->advertise("do");
+      node->advertise("value");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::ORP_SENSOR:{
       auto node = new HomieNode(id, t, id); 
       node->advertise("unit");
-      node->advertise("orp");
+      node->advertise("value");
       nodes.insert(std::make_pair(id, node));
       break;
     }
     case dc::atlas::Device::EC_SENSOR:{
       auto node = new HomieNode(id, t, id); 
       node->advertise("unit");
-      node->advertise("ec");
+      node->advertise("value");
       nodes.insert(std::make_pair(id, node));
       break;
     }
