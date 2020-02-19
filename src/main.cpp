@@ -78,7 +78,10 @@ dc::atlas::Device* dev = NULL;
   // add the canvas to the screen
   screen.add_canvas(
         gj::utils::CanvasRegister::get_canvas_func(dev), dev);
-  reg->add_node(dev);
+  reg->add_node(
+      dc::atlas::Device::TEMP_SENSOR,
+      "temp",
+      "TEMP_SENSOR");
   // schedule the read command every 2 seconds.
   device_manager.schedule_command(
         "R",
@@ -99,7 +102,10 @@ dc::atlas::Device* dev = NULL;
   // add the canvas to the screen
   screen.add_canvas(
         gj::utils::CanvasRegister::get_canvas_func(dev), dev);
-  reg->add_node(dev);
+  reg->add_node(
+      dc::atlas::Device::PH_SENSOR,
+      "ph",
+      "PH_SENSOR");
   // schedule the read command every 2 seconds.
   device_manager.schedule_command(
         "R",
@@ -120,7 +126,10 @@ dc::atlas::Device* dev = NULL;
   // add the canvas to the screen
   screen.add_canvas(
         gj::utils::CanvasRegister::get_canvas_func(dev), dev);
-  reg->add_node(dev);
+  reg->add_node(
+    dc::atlas::Device::ORP_SENSOR,
+    "orp",
+    "ORP_SENSOR");
   // schedule the read command every 2 seconds.
   device_manager.schedule_command(
         "R",
@@ -141,7 +150,10 @@ dc::atlas::Device* dev = NULL;
   // add the canvas to the screen
   screen.add_canvas(
         gj::utils::CanvasRegister::get_canvas_func(dev), dev);
-  reg->add_node(dev);
+  reg->add_node(
+    dc::atlas::Device::EC_SENSOR,
+    "ec",
+    "EC_SENSOR");
   // schedule the read command every 2 seconds.
   device_manager.schedule_command(
         "R",
@@ -162,7 +174,10 @@ dc::atlas::Device* dev = NULL;
   // add the canvas to the screen
   screen.add_canvas(
         gj::utils::CanvasRegister::get_canvas_func(dev), dev);
-  reg->add_node(dev);
+  reg->add_node(
+    dc::atlas::Device::DO_SENSOR,
+    "do",
+    "DO_SENSOR");
   // schedule the read command every 2 seconds.
   device_manager.schedule_command(
         "R",
